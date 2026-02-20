@@ -1,4 +1,5 @@
 const LeaveRequest = require("../models/LeaveRequest");
+const LockedPeriod = require("../models/LockedPeriod");
 
 exports.applyLeave = async (req, res) => {
   try {
@@ -9,22 +10,35 @@ exports.applyLeave = async (req, res) => {
       });
     }
 
+    const { leaveType, startDate, endDate } = req.body;
+    const { gender, maritalStatus } = req.user;
+
     // 🚫 Maternity rule
     if (
-      req.body.leaveType === "Maternity" &&
-      req.user.gender !== "Female"
+      leaveType === "Maternity" &&
+      (gender !== "Female" || maritalStatus !== "Married")
     ) {
       return res.status(400).json({
-        message: "Maternity leave is only applicable for female employees",
+        message:
+          "Maternity leave is only applicable for married female employees",
+      });
+    }
+
+    // 🚫 Paternity rule
+    if (
+      leaveType === "Paternity" &&
+      (gender !== "Male" || maritalStatus !== "Married")
+    ) {
+      return res.status(400).json({
+        message:
+          "Paternity leave is only applicable for married male employees",
       });
     }
 
     // 🔒 Locked period check
-    const LockedPeriod = require("../models/LockedPeriod");
-
     const clash = await LockedPeriod.findOne({
-      startDate: { $lte: req.body.endDate },
-      endDate: { $gte: req.body.startDate },
+      startDate: { $lte: endDate },
+      endDate: { $gte: startDate },
     });
 
     if (clash) {
@@ -36,9 +50,9 @@ exports.applyLeave = async (req, res) => {
     // ✅ Create leave
     const leave = await LeaveRequest.create({
       faculty: req.user.id,
-      leaveType: req.body.leaveType,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate,
+      leaveType,
+      startDate,
+      endDate,
       reason: req.body.reason,
       substituteFaculty: req.body.substituteFaculty,
       status: "PENDING",
@@ -48,11 +62,11 @@ exports.applyLeave = async (req, res) => {
       message: "Leave applied successfully",
       leave,
     });
-
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 exports.getLeavesForHOD = async (req, res) => {

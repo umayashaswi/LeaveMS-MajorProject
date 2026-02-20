@@ -34,7 +34,6 @@ export default function DashboardFaculty() {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
-  /* ---------------- DATE / YEAR ---------------- */
   const today = new Date();
   const currentYear = today.getFullYear();
 
@@ -48,7 +47,6 @@ export default function DashboardFaculty() {
     weekday: "long",
   });
 
-  /* ---------------- STATE ---------------- */
   const [form, setForm] = useState({
     leaveType: "",
     startDate: "",
@@ -69,7 +67,7 @@ export default function DashboardFaculty() {
     }
   }, [navigate, user]);
 
-  /* ---------------- FETCH LEAVES (REALTIME) ---------------- */
+  /* ---------------- FETCH LEAVES ---------------- */
   const fetchMyLeaves = async () => {
     const res = await axios.get("http://localhost:5000/api/leave/my", {
       headers: { Authorization: `Bearer ${token}` },
@@ -131,7 +129,7 @@ export default function DashboardFaculty() {
         (usedLeaves[l.leaveType] || 0) + days;
     });
 
-  /* ---------------- YEAR-WISE ANALYTICS ---------------- */
+  /* ---------------- ANALYTICS ---------------- */
   const monthlyCounts = Array(12).fill(0);
 
   leaves.forEach((l) => {
@@ -155,7 +153,7 @@ export default function DashboardFaculty() {
     ],
   };
 
-  /* ---------------- PDF (YEAR-WISE) ---------------- */
+  /* ---------------- PDF ---------------- */
   const downloadPDF = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -209,14 +207,30 @@ export default function DashboardFaculty() {
 
         {/* LEAVE BALANCES */}
         <div className="grid grid-cols-4 gap-4 mb-8">
-          {Object.keys(LEAVE_LIMITS).map((type) => (
-            <div key={type} className="bg-white rounded-xl shadow p-4">
-              <p className="font-semibold">{type}</p>
-              <p className="text-sm text-gray-500">
-                Used: {usedLeaves[type] || 0} / {LEAVE_LIMITS[type]} days
-              </p>
-            </div>
-          ))}
+          {Object.keys(LEAVE_LIMITS)
+            .filter((type) => {
+              if (
+                type === "Maternity" &&
+                (user.gender !== "Female" ||
+                  user.maritalStatus !== "Married")
+              ) return false;
+
+              if (
+                type === "Paternity" &&
+                (user.gender !== "Male" ||
+                  user.maritalStatus !== "Married")
+              ) return false;
+
+              return true;
+            })
+            .map((type) => (
+              <div key={type} className="bg-white rounded-xl shadow p-4">
+                <p className="font-semibold">{type}</p>
+                <p className="text-sm text-gray-500">
+                  Used: {usedLeaves[type] || 0} / {LEAVE_LIMITS[type]} days
+                </p>
+              </div>
+            ))}
         </div>
 
         {/* APPLY LEAVE */}
@@ -227,36 +241,38 @@ export default function DashboardFaculty() {
           {error && <p className="text-red-600">{error}</p>}
 
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+
             <select
-  name="leaveType"
-  value={form.leaveType}
-  onChange={handleChange}
-  required
-  className="input"
->
-  <option value="">Select Leave Type</option>
+              name="leaveType"
+              value={form.leaveType}
+              onChange={handleChange}
+              required
+              className="input"
+            >
+              <option value="">Select Leave Type</option>
 
-  {Object.keys(LEAVE_LIMITS)
-    .filter((type) => {
-      // 🚫 Block Maternity for males
-      if (type === "Maternity" && user.gender !== "Female") {
-        return false;
-      }
+              {Object.keys(LEAVE_LIMITS)
+                .filter((type) => {
+                  if (
+                    type === "Maternity" &&
+                    (user.gender !== "Female" ||
+                      user.maritalStatus !== "Married")
+                  ) return false;
 
-      // 🚫 Block Paternity for females
-      if (type === "Paternity" && user.gender !== "Male") {
-        return false;
-      }
+                  if (
+                    type === "Paternity" &&
+                    (user.gender !== "Male" ||
+                      user.maritalStatus !== "Married")
+                  ) return false;
 
-      return true;
-    })
-    .map((type) => (
-      <option key={type} value={type}>
-        {type}
-      </option>
-    ))}
-</select>
-
+                  return true;
+                })
+                .map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+            </select>
 
             <input
               name="substituteFaculty"
