@@ -19,6 +19,8 @@ module.exports = (req, res, next) => {
       id: decoded.id,      // 🔥 THIS IS WHAT WE NEED
       role: decoded.role,
       gender: decoded.gender,
+      maritalStatus: decoded.maritalStatus,
+      department: decoded.department
     };
 
     next();

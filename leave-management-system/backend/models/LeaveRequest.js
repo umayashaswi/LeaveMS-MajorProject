@@ -35,10 +35,24 @@ const leaveRequestSchema = new mongoose.Schema(
 
     reason: { type: String, required: true },
 
-    substituteFaculty: {
-      type: String,
-      required: true,
-    },
+    substitutions: [
+      {
+        date: { type: Date, required: true },
+        period: { type: Number, required: true },
+        substituteFaculty: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        // 🔥 ADD THIS BLOCK BELOW 🔥
+        status: {
+          type: String,
+          enum: ["PENDING", "ACCEPTED", "DECLINED"],
+          default: "PENDING",
+        },
+      },
+    ],
+
 
     rejectionReason: {
       type: String,
@@ -53,6 +67,10 @@ const leaveRequestSchema = new mongoose.Schema(
 hodComment: {
   type: String,
   default: "",
+},
+
+adminComment: {
+  type: String,
 },
 
 forwardedToAdmin: {

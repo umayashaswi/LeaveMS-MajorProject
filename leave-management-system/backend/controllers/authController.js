@@ -15,6 +15,7 @@ exports.register = async (req, res) => {
   maritalStatus,
   role,
   gender,
+  department,
 } = req.body;
 
 
@@ -37,6 +38,7 @@ exports.register = async (req, res) => {
       maritalStatus,
       role,
       gender,
+      department,
       emailOtp: otp,
       otpExpiry: Date.now() + 10 * 60 * 1000, // 10 mins
       isVerified: false,
@@ -129,6 +131,7 @@ exports.login = async (req, res) => {
       { id: user._id, email: user.email,
         role:user.role, 
         gender:user.gender,
+        department:user.department,
         maritalStatus: user.maritalStatus
     },
       process.env.JWT_SECRET,
@@ -144,6 +147,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        department: user.department,
         gender: user.gender,
         maritalStatus: user.maritalStatus,
       },
