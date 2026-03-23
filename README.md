@@ -41,7 +41,54 @@ The system is tailored for three specific user roles, each with a dedicated dash
 * **Communication:** Nodemailer (Email OTP Verification & Notifications)
 
 ---
+---
 
+## 📸 Application Screenshots
+
+### 🏠 Landing Page
+![Landing Page](landing-page.png)
+
+### 🔐 Login Page
+![Login Page](login-page.png)
+
+### 📝 Register Page
+![Register Page](register-page.png)
+
+### 📝 OTP-Validation Page
+![OTP Validation](otp-validation%20page.png)
+
+### 👩‍🏫 Faculty Dashboard
+![Faculty Dashboard](Faculty%20Dashboard.png)
+
+### 👤 Faculty Profile
+![Faculty Profile](Faculty%20profile.png)
+
+### 📅 Faculty Timetable
+![Faculty Timetable](faculty-timetable.png)
+
+### 🔄 Substitution Request
+![Substitution Request](faculty-substitution-request.png)
+
+### 👨‍💼 HOD Dashboard
+![HOD Dashboard](hod-dashboard.png)
+
+### 👤 HOD Profile
+![HOD Profile](hod-profile.png)
+
+### 📢 HOD Notifications
+![HOD Notifications](hod-notifications.png)
+
+### 👨‍🏫 HOD View Faculty
+![HOD View Faculty](hod-view-faculty.png)
+
+### 🧑‍💻 Admin Dashboard
+![Admin Dashboard](admin-dashboard.png)
+
+### ✉️ Admin Create Message
+![Admin Create Message](admin-create-message.png)
+
+### 💬 Admin Message Center
+![Admin Messages](admin-view-messages.png)
 ## 🚦 Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine.
